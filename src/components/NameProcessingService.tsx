@@ -49,6 +49,11 @@ export default function NameProcessingService() {
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
 
+  const capitalizeFirstLetter = (name: string): string => {
+    if (!name) return name;
+    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+  };
+
   const extractHonorific = (name: string): { honorific: string; cleanName: string } => {
     const nameLower = name.toLowerCase().trim();
     
@@ -63,13 +68,13 @@ export default function NameProcessingService() {
         if (match) {
           return {
             honorific: honorific.charAt(0).toUpperCase() + honorific.slice(1),
-            cleanName: match[1].trim()
+            cleanName: capitalizeFirstLetter(match[1].trim())
           };
         }
       }
     }
     
-    return { honorific: '', cleanName: name.trim() };
+    return { honorific: '', cleanName: capitalizeFirstLetter(name.trim()) };
   };
 
   const checkSpelling = (name: string, nameType: 'first' | 'last') => {
@@ -161,7 +166,7 @@ export default function NameProcessingService() {
       
       // Clean names
       const cleanFirstName = firstNameResult.cleanName;
-      const cleanLastName = lastNameResult.honorific ? lastNameResult.cleanName : lastName;
+      const cleanLastName = lastNameResult.honorific ? lastNameResult.cleanName : capitalizeFirstLetter(lastName);
       
       // Spell check
       const firstNameSpellCheck = checkSpelling(cleanFirstName, 'first');
