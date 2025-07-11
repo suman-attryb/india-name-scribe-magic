@@ -58,8 +58,6 @@ export const INDIAN_FIRST_NAMES = new Set([
   "Tarun",
   "Varun",
   "Yash",
-
-  // Additional male names
   "Abhay",
   "Abhinav",
   "Adarsh",
@@ -155,8 +153,6 @@ export const INDIAN_FIRST_NAMES = new Set([
   "Usha",
   "Vandana",
   "Yamini",
-
-  // Additional female names
   "Aarti",
   "Alka",
   "Anita",
@@ -218,37 +214,6 @@ export const INDIAN_FIRST_NAMES = new Set([
   "Usha",
   "Vasantha",
 
-  // Regional variations and common spellings
-  "Abhijit",
-  "Abhijeet",
-  "Akshit",
-  "Akshat",
-  "Anmol",
-  "Arjun",
-  "Ashutosh",
-  "Ayush",
-  "Bhavesh",
-  "Chiranjeev",
-  "Devendra",
-  "Gagan",
-  "Himanshu",
-  "Ishwar",
-  "Jayant",
-  "Keshav",
-  "Lokesh",
-  "Manav",
-  "Naman",
-  "Om",
-  "Parth",
-  "Qasim",
-  "Raman",
-  "Samarth",
-  "Tanmay",
-  "Uday",
-  "Vaibhav",
-  "Yatin",
-  "Zain",
-
   // Unisex names
   "Arpit",
   "Avni",
@@ -264,7 +229,6 @@ export const INDIAN_FIRST_NAMES = new Set([
   "Veer",
 ])
 
-// Common Indian last names/surnames
 export const INDIAN_LAST_NAMES = new Set([
   "Agarwal",
   "Aggarwal",
@@ -313,8 +277,6 @@ export const INDIAN_LAST_NAMES = new Set([
   "Thakur",
   "Tripathi",
   "Yadav",
-
-  // South Indian surnames
   "Iyer",
   "Iyengar",
   "Krishnan",
@@ -335,8 +297,6 @@ export const INDIAN_LAST_NAMES = new Set([
   "Rao",
   "Shenoy",
   "Upadhyay",
-
-  // Bengali surnames
   "Das",
   "Dutta",
   "Ghosh",
@@ -347,8 +307,6 @@ export const INDIAN_LAST_NAMES = new Set([
   "Bhattacharya",
   "Chakraborty",
   "Roy",
-
-  // Additional common surnames
   "Agrawal",
   "Arora",
   "Bajaj",
@@ -375,48 +333,8 @@ export const INDIAN_LAST_NAMES = new Set([
   "Xavier",
   "Yadav",
   "Zaveri",
-
-  // Regional variations
-  "Agrahari",
-  "Bharadwaj",
-  "Chaturvedi",
-  "Dwivedi",
-  "Gaur",
-  "Jaiswal",
-  "Kashyap",
-  "Lal",
-  "Mathur",
-  "Nigam",
-  "Ojha",
-  "Pathak",
-  "Rai",
-  "Srivastav",
-  "Trivedi",
-  "Upadhyaya",
-  "Vyas",
-  "Yadava",
-
-  // South Indian variations
-  "Aiyer",
-  "Balakrishnan",
-  "Chandrasekhar",
-  "Deshpande",
-  "Govindan",
-  "Hariharan",
-  "Jagadish",
-  "Krishnamurthy",
-  "Lakshminarayan",
-  "Mahadevan",
-  "Narayanan",
-  "Parthasarathy",
-  "Raghunathan",
-  "Srinivasan",
-  "Thyagarajan",
-  "Venkatesan",
-  "Vishwanathan",
 ])
 
-// Honorifics to extract
 export const HONORIFICS = new Set([
   "Mr.",
   "Mr",
@@ -439,9 +357,6 @@ export const HONORIFICS = new Set([
   "Ji",
 ])
 
-// Replace the existing levenshteinDistance and findClosestMatch functions with improved similarity metrics
-
-// Function to calculate Levenshtein distance for spell checking
 export function levenshteinDistance(str1: string, str2: string): number {
   const matrix = Array(str2.length + 1)
     .fill(null)
@@ -456,17 +371,13 @@ export function levenshteinDistance(str1: string, str2: string): number {
       matrix[j][i] = Math.min(matrix[j][i - 1] + 1, matrix[j - 1][i] + 1, matrix[j - 1][i - 1] + indicator)
     }
   }
-
   return matrix[str2.length][str1.length]
 }
 
-// Jaro similarity
 export function jaroSimilarity(str1: string, str2: string): number {
   if (str1 === str2) return 1.0
-
   const len1 = str1.length
   const len2 = str2.length
-
   if (len1 === 0 || len2 === 0) return 0.0
 
   const matchWindow = Math.floor(Math.max(len1, len2) / 2) - 1
@@ -474,15 +385,12 @@ export function jaroSimilarity(str1: string, str2: string): number {
 
   const str1Matches = new Array(len1).fill(false)
   const str2Matches = new Array(len2).fill(false)
-
   let matches = 0
   let transpositions = 0
 
-  // Find matches
   for (let i = 0; i < len1; i++) {
     const start = Math.max(0, i - matchWindow)
     const end = Math.min(i + matchWindow + 1, len2)
-
     for (let j = start; j < end; j++) {
       if (str2Matches[j] || str1[i] !== str2[j]) continue
       str1Matches[i] = true
@@ -494,7 +402,6 @@ export function jaroSimilarity(str1: string, str2: string): number {
 
   if (matches === 0) return 0.0
 
-  // Find transpositions
   let k = 0
   for (let i = 0; i < len1; i++) {
     if (!str1Matches[i]) continue
@@ -506,10 +413,8 @@ export function jaroSimilarity(str1: string, str2: string): number {
   return (matches / len1 + matches / len2 + (matches - transpositions / 2) / matches) / 3.0
 }
 
-// Jaro-Winkler similarity
 export function jaroWinklerSimilarity(str1: string, str2: string): number {
   const jaroSim = jaroSimilarity(str1, str2)
-
   if (jaroSim < 0.7) return jaroSim
 
   let prefix = 0
@@ -517,20 +422,16 @@ export function jaroWinklerSimilarity(str1: string, str2: string): number {
     if (str1[i] === str2[i]) prefix++
     else break
   }
-
   return jaroSim + 0.1 * prefix * (1 - jaroSim)
 }
 
-// Calculate similarity ratio (0-1, where 1 is identical)
 export function similarityRatio(str1: string, str2: string): number {
   const maxLen = Math.max(str1.length, str2.length)
   if (maxLen === 0) return 1.0
   return 1 - levenshteinDistance(str1, str2) / maxLen
 }
 
-// Phonetic similarity for Indian names (simplified)
 export function phoneticSimilarity(str1: string, str2: string): number {
-  // Convert to phonetic representation (simplified for Indian names)
   const phoneticConvert = (str: string): string => {
     return str
       .toLowerCase()
@@ -544,29 +445,15 @@ export function phoneticSimilarity(str1: string, str2: string): number {
       .replace(/dh/g, "d")
       .replace(/v/g, "w")
       .replace(/y/g, "i")
-      .replace(/[aeiou]/g, "") // Remove vowels for consonant matching
+      .replace(/[aeiou]/g, "")
   }
 
   const phonetic1 = phoneticConvert(str1)
   const phonetic2 = phoneticConvert(str2)
-
   return similarityRatio(phonetic1, phonetic2)
 }
 
-// Comprehensive similarity scoring
-export function calculateSimilarityScore(
-  original: string,
-  candidate: string,
-): {
-  score: number
-  metrics: {
-    levenshtein: number
-    jaro: number
-    jaroWinkler: number
-    similarity: number
-    phonetic: number
-  }
-} {
+export function calculateSimilarityScore(original: string, candidate: string) {
   const orig = original.toLowerCase().trim()
   const cand = candidate.toLowerCase().trim()
 
@@ -578,18 +465,11 @@ export function calculateSimilarityScore(
     phonetic: phoneticSimilarity(orig, cand),
   }
 
-  // Weighted composite score
   const score = metrics.jaroWinkler * 0.4 + metrics.similarity * 0.3 + metrics.phonetic * 0.2 + metrics.jaro * 0.1
-
   return { score, metrics }
 }
 
-// Improved closest match finder with strict similarity requirements
-export function findClosestMatch(
-  name: string,
-  dictionary: Set<string>,
-  minSimilarity = 0.7,
-): { match: string; score: number; metrics: any } | null {
+export function findClosestMatch(name: string, dictionary: Set<string>, minSimilarity = 0.7) {
   if (!name || name.trim().length === 0) return null
 
   const cleanName = name.trim()
@@ -597,35 +477,22 @@ export function findClosestMatch(
   let bestScore = 0
   let bestMetrics = null
 
-  // First check for exact matches (case insensitive)
   for (const dictName of dictionary) {
     if (dictName.toLowerCase() === cleanName.toLowerCase()) {
       return {
         match: dictName,
         score: 1.0,
-        metrics: {
-          levenshtein: 0,
-          jaro: 1.0,
-          jaroWinkler: 1.0,
-          similarity: 1.0,
-          phonetic: 1.0,
-        },
+        metrics: { levenshtein: 0, jaro: 1.0, jaroWinkler: 1.0, similarity: 1.0, phonetic: 1.0 },
       }
     }
   }
 
-  // Then find best similarity match
   for (const dictName of dictionary) {
     const { score, metrics } = calculateSimilarityScore(cleanName, dictName)
-
-    // Additional constraints for better matching
     const lengthDiff = Math.abs(cleanName.length - dictName.length)
     const maxLengthDiff = Math.max(2, Math.floor(cleanName.length * 0.3))
 
-    // Skip if names are too different in length
     if (lengthDiff > maxLengthDiff) continue
-
-    // Skip if Levenshtein distance is too high
     if (metrics.levenshtein > Math.max(2, Math.floor(cleanName.length * 0.4))) continue
 
     if (score > bestScore && score >= minSimilarity) {

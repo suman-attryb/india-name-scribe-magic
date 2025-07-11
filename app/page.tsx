@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,8 +11,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { Upload, Download, CheckCircle, AlertCircle, FileText } from "lucide-react"
-import { NameProcessingService, type ProcessedCSVRow } from "../lib/name-processing-service"
-import { parseCSV, generateCSV, downloadCSV } from "../lib/csv-utils"
+import { NameProcessingService, type ProcessedCSVRow } from "@/lib/name-processing-service"
+import { parseCSV, generateCSV, downloadCSV } from "@/lib/csv-utils"
 
 export default function NameCleanupService() {
   const [file, setFile] = useState<File | null>(null)
@@ -59,7 +60,6 @@ export default function NameCleanupService() {
       const processedData = nameProcessor.processCSVData(csvData)
       setProgress(80)
 
-      // Calculate statistics
       const statistics = {
         total: processedData.length,
         honorificsExtracted: processedData.filter((row) => row.Honorific).length,
@@ -82,7 +82,6 @@ export default function NameCleanupService() {
 
   const downloadResults = () => {
     if (!results) return
-
     const csvContent = generateCSV(results)
     const timestamp = new Date().toISOString().split("T")[0]
     downloadCSV(csvContent, `cleaned_names_${timestamp}.csv`)

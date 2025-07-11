@@ -9,7 +9,6 @@ export function parseCSV(csvContent: string): CSVRow[] {
   const headers = lines[0].split(",").map((h) => h.trim().replace(/"/g, ""))
   const requiredHeaders = ["First Name", "Last Name", "Gender", "Email", "Date of Birth"]
 
-  // Validate headers
   for (const required of requiredHeaders) {
     if (!headers.includes(required)) {
       throw new Error(`Missing required column: ${required}`)
@@ -25,7 +24,7 @@ export function parseCSV(csvContent: string): CSVRow[] {
       continue
     }
 
-    const row: any = {}
+    const row: Record<string, string> = {}
     headers.forEach((header, index) => {
       row[header] = values[index] || ""
     })
